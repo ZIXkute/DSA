@@ -1,0 +1,95 @@
+//LL Stack
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct node {
+    int data;
+    struct node* next;
+} Node;
+
+typedef struct {
+    Node* top;
+} Stack;
+
+Stack* initialize() {
+    Stack* s = (Stack*)malloc(sizeof(Stack));
+    if (s == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    s->top = NULL;
+    return s;
+}
+
+bool isFull(Stack* s) {
+    return false; 
+}
+
+bool isEmpty(Stack* s) {
+    return s->top == NULL;
+}
+
+void push(Stack* s, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed! Cannot push %d\n", value);
+        return;
+    }
+    newNode->data = value;
+    newNode->next = s->top;
+    s->top = newNode;
+}
+
+int pop(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow! Cannot pop\n");
+        return -1;
+    }
+    Node* temp = s->top;
+    int value = temp->data;
+    s->top = s->top->next;
+    free(temp);
+    return value;
+}
+
+int peek(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty!\n");
+        return -1;
+    }
+    return s->top->data;
+}
+
+void display(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty!\n");
+        return;
+    }
+    Node* current = s->top;
+    printf("Stack elements (top to bottom):\n");
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Stack* s = initialize();
+
+    push(s, 1);
+    push(s, 3);
+    push(s, 5);
+    display(s);
+
+    printf("Peek: %d\n", peek(s));
+
+    printf("Popped: %d\n", pop(s));
+    display(s);
+
+    push(s, 4);
+    display(s);
+
+    return 0;
+}
