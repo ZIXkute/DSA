@@ -1,1 +1,87 @@
+// Array Stack Var1
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
+#define MAX 10
+
+typedef struct{
+    int items[MAX];
+    int top;
+}Stack;
+
+Stack *initialize(){
+    Stack *s = malloc(sizeof(Stack));
+    if(s == NULL){
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    s->top = -1;
+    return s;
+}
+
+bool isFull(Stack *s){
+    return s->top == MAX - 1;
+}
+
+bool isEmpty(Stack *s){
+    return s->top == -1;
+}
+
+void push(Stack *s, int value){
+    if(isFull(s)){
+        printf("Stack overflow", value);
+        return;
+    }
+    s->items[++s->top] = value;
+}
+
+int pop(Stack *s){
+    if(isEmpty(s)){
+        printf("Stack underflow\n");
+        return -1;
+    }
+    return s->items[s->top--];
+}
+
+int peek(Stack *s){
+    if(isEmpty(s)){
+        printf("Stack empty\n");
+        return -1;
+    }
+    return s->items[s->top];
+}
+
+int top(Stack *s){
+    return s->top;
+}
+
+void display(Stack *s){
+    if(isEmpty(s)){
+        printf("Empty\n");
+        return;
+    }
+    printf("Stack elements (top to bottom):\n");
+    for(int i = s->top; i >= 0; i--){
+        printf("%d\n", s->items[i]);
+    }
+}
+
+int main() {
+    Stack *s = initialize();
+    
+    push(s, 1);
+    push(s, 2);
+    push(s, 3);
+    push(s, 4);
+    display(s);
+    
+    printf("Peek: %d\n", peek(s));
+    printf("Pop: %d\n", pop(s));
+    display(s);
+    
+    printf("Top index: %d\n", top(s));
+    free(s);
+
+    return 0;
+}
