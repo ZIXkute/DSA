@@ -1,0 +1,114 @@
+// Linked List Queue var2
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct node{
+    int data;
+    struct node *next;
+}Node;
+
+typedef struct{
+    Node *front;
+    Node *rear;
+}Queue;
+
+Queue *initialize(){
+    Queue *q = malloc(sizeof(Queue));
+    if(q == NULL){
+        printf("failed\n");
+        exit(1);
+    }
+    q->front = NULL;
+    q->rear = NULL;
+    return q;
+}
+
+bool isFrull(Queue *q){
+    return false;
+}
+
+bool isEmpty(Queue *q){
+    return q->rear == NULL;
+}
+
+void enqueue(Queue *q, int value){
+    Node *newNode = malloc(sizeof(Node));
+    if(newNode == NULL){
+        printf("failed %d\n", value);
+        return;
+    }
+    newNode->data = value;
+    newNode->next = q->rear;
+    q->rear = newNode;
+    
+    if(q->front == NULL)
+    q->front = newNode;
+}
+
+int dequeue(Queue *q){
+    if(isEmpty(q)){
+        printf("empty\n");
+        return -1;
+    }
+    Node *temp = q->rear;
+    Node *prev = NULL;
+    
+    while(temp->next != NULL){
+        prev = temp;
+        temp = temp->next;
+    }
+    int value = temp->data;
+    
+    if(prev == NULL){
+        q->front = NULL;
+        q->rear = NULL;
+    }else{
+        prev->next = NULL;
+        q->front = prev;
+    }
+    
+    free(temp);
+    return value;
+}
+
+int front(Queue *q){
+    if(isEmpty(q)){
+        printf("Empty\n");
+        return -1;
+    }
+    return q->front->data;
+}
+
+void display(Queue *q){
+    if(isEmpty(q)){
+        printf("Empty\n");
+        return;
+    }
+    Node *current = q->rear;
+    printf("Queue (rear to front): ");
+    while (current != NULL){
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(){
+    Queue *q = initialize();
+    
+    enqueue(q, 1);
+    enqueue(q, 2);
+    enqueue(q, 5);
+    display(q);
+    
+    printf("Front: %d\n", front(q));
+    
+    printf("Dequeue: %d\n", dequeue(q));
+    display(q);
+    
+    enqueue(q, 3);
+    display(q);
+    
+    return 0;
+}
