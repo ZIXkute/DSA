@@ -1,4 +1,4 @@
-//Cursor Based var2
+//var2
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,17 +12,17 @@ typedef struct {
 
 typedef struct {
     Cell HeapSpace[MAX];
-    int avail;   
+    int avail;  
 } VHeap;
 
 typedef int List;  
 
 void initialize(VHeap *VH) {
-    for (int i = 0; i < MAX - 1; i++) {
-        VH->HeapSpace[i].next = i + 1;
+    for (int i = MAX - 1; i > 0; i--) {
+        VH->HeapSpace[i].next = i - 1;
     }
-    VH->HeapSpace[MAX - 1].next = NIL;
-    VH->avail = 0;
+    VH->HeapSpace[0].next = NIL;
+    VH->avail = MAX - 1;  
 }
 
 int allocSpace(VHeap *VH) {
@@ -30,7 +30,7 @@ int allocSpace(VHeap *VH) {
     if (availIdx != NIL) {
         VH->avail = VH->HeapSpace[availIdx].next;
     }
-    return availIdx; 
+    return availIdx;
 }
 
 void deallocSpace(VHeap *VH, int index) {
@@ -64,18 +64,16 @@ void insertRear(List *L, VHeap *VH, int elem) {
         *L = newIdx;
     } else {
         int trav = *L;
-        while (VH->HeapSpace[trav].next != NIL) {
+        while (VH->HeapSpace[trav].next != NIL)
             trav = VH->HeapSpace[trav].next;
-        }
         VH->HeapSpace[trav].next = newIdx;
     }
 }
 
 void deleteElem(List *L, VHeap *VH, int elem) {
     int *trav = L;
-    while (*trav != NIL && VH->HeapSpace[*trav].elem != elem) {
+    while (*trav != NIL && VH->HeapSpace[*trav].elem != elem)
         trav = &VH->HeapSpace[*trav].next;
-    }
 
     if (*trav != NIL) {
         int temp = *trav;
@@ -88,9 +86,8 @@ void deleteElem(List *L, VHeap *VH, int elem) {
 
 void display(List L, VHeap VH) {
     printf("List elements: ");
-    for (int i = L; i != NIL; i = VH.HeapSpace[i].next) {
+    for (int i = L; i != NIL; i = VH.HeapSpace[i].next)
         printf("%d ", VH.HeapSpace[i].elem);
-    }
     printf("\n");
 }
 
@@ -117,11 +114,11 @@ int main() {
     display(L, VH);
     displayVHeap(VH);
 
-    deleteElem(&L, &VH, 20);
+    deleteElem(&L, &VH, 10);
     display(L, VH);
     displayVHeap(VH);
 
-    insertFront(&L, &VH, 40);
+    insertRear(&L, &VH, 40);
     display(L, VH);
     displayVHeap(VH);
 
