@@ -1,0 +1,129 @@
+//Cursor Based var2
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 4
+#define NIL -1
+
+typedef struct {
+    int elem;
+    int next;
+} Cell;
+
+typedef struct {
+    Cell HeapSpace[MAX];
+    int avail;   
+} VHeap;
+
+typedef int List;  
+
+void initialize(VHeap *VH) {
+    for (int i = 0; i < MAX - 1; i++) {
+        VH->HeapSpace[i].next = i + 1;
+    }
+    VH->HeapSpace[MAX - 1].next = NIL;
+    VH->avail = 0;
+}
+
+int allocSpace(VHeap *VH) {
+    int availIdx = VH->avail;
+    if (availIdx != NIL) {
+        VH->avail = VH->HeapSpace[availIdx].next;
+    }
+    return availIdx;
+}
+
+void deallocSpace(VHeap *VH, int index) {
+    VH->HeapSpace[index].next = VH->avail;
+    VH->avail = index;
+}
+
+void insertFront(List *L, VHeap *VH, int elem) {
+    int newIdx = allocSpace(VH);
+    if (newIdx == NIL) {
+        printf("No more space to insert %d\n", elem);
+        return;
+    }
+
+    VH->HeapSpace[newIdx].elem = elem;
+    VH->HeapSpace[newIdx].next = *L;
+    *L = newIdx;
+}
+
+void insertRear(List *L, VHeap *VH, int elem) {
+    int newIdx = allocSpace(VH);
+    if (newIdx == NIL) {
+        printf("No more space to insert %d\n", elem);
+        return;
+    }
+
+    VH->HeapSpace[newIdx].elem = elem;
+    VH->HeapSpace[newIdx].next = NIL;
+
+    if (*L == NIL) {
+        *L = newIdx;
+    } else {
+        int trav = *L;
+        while (VH->HeapSpace[trav].next != NIL) {
+            trav = VH->HeapSpace[trav].next;
+        }
+        VH->HeapSpace[trav].next = newIdx;
+    }
+}
+
+void deleteElem(List *L, VHeap *VH, int elem) {
+    int *trav = L;
+    while (*trav != NIL && VH->HeapSpace[*trav].elem != elem) {
+        trav = &VH->HeapSpace[*trav].next;
+    }
+
+    if (*trav != NIL) {
+        int temp = *trav;
+        *trav = VH->HeapSpace[temp].next;
+        deallocSpace(VH, temp);
+    } else {
+        printf("Element %d not found.\n", elem);
+    }
+}
+
+void display(List L, VHeap VH) {
+    printf("List elements: ");
+    for (int i = L; i != NIL; i = VH.HeapSpace[i].next) {
+        printf("%d ", VH.HeapSpace[i].elem);
+    }
+    printf("\n");
+}
+
+void displayVHeap(VHeap VH) {
+    printf("\nIndex | Elem | Next\n");
+    printf("------------------\n");
+    for (int i = 0; i < MAX; i++) {
+        printf("%5d | %4d | %4d\n", i, VH.HeapSpace[i].elem, VH.HeapSpace[i].next);
+    }
+    printf("avail = %d\n\n", VH.avail);
+}
+
+int main() {
+    VHeap VH;
+    List L = NIL;
+    initialize(&VH);
+
+    printf("Initial state:\n");
+    displayVHeap(VH);
+
+    insertFront(&L, &VH, 10);
+    insertFront(&L, &VH, 20);
+    insertRear(&L, &VH, 30);
+    display(L, VH);
+    displayVHeap(VH);
+
+    deleteElem(&L, &VH, 20);
+    display(L, VH);
+    displayVHeap(VH);
+
+    insertFront(&L, &VH, 40);
+    display(L, VH);
+    displayVHeap(VH);
+
+    return 0;
+}
