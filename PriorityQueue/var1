@@ -1,0 +1,105 @@
+#include <stdio.h>
+
+#define MAX 10
+
+typedef struct {
+    int data;
+    int priority;
+} PQNode;
+
+typedef struct {
+    PQNode items[MAX];
+    int size;
+} PriorityQueue;
+
+/* Initialize priority queue */
+void initPQ(PriorityQueue *pq) {
+    pq->size = 0;
+}
+
+/* Check if empty */
+int isEmpty(PriorityQueue *pq) {
+    return pq->size == 0;
+}
+
+/* Check if full */
+int isFull(PriorityQueue *pq) {
+    return pq->size == MAX;
+}
+
+/* Insert element based on priority */
+void enqueue(PriorityQueue *pq, int data, int priority) {
+    int i;
+
+    if (isFull(pq)) {
+        printf("Priority Queue is full!\n");
+        return;
+    }
+
+    i = pq->size - 1;
+
+    /* Shift elements to maintain priority order */
+    while (i >= 0 && pq->items[i].priority > priority) {
+        pq->items[i + 1] = pq->items[i];
+        i--;
+    }
+
+    pq->items[i + 1].data = data;
+    pq->items[i + 1].priority = priority;
+    pq->size++;
+}
+
+/* Remove highest priority element */
+int dequeue(PriorityQueue *pq) {
+    int data;
+
+    if (isEmpty(pq)) {
+        printf("Priority Queue is empty!\n");
+        return -1;
+    }
+
+    data = pq->items[0].data;
+
+    /* Shift elements left */
+    for (int i = 0; i < pq->size - 1; i++) {
+        pq->items[i] = pq->items[i + 1];
+    }
+
+    pq->size--;
+    return data;
+}
+
+/* Display priority queue */
+void display(PriorityQueue *pq) {
+    int i;
+    printf("Priority Queue:\n");
+    printf("Data | Priority\n");
+    printf("---------------\n");
+
+    for (i = 0; i < pq->size; i++) {
+        printf("%4d | %8d\n",
+               pq->items[i].data,
+               pq->items[i].priority);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    PriorityQueue pq;
+
+    initPQ(&pq);
+
+    enqueue(&pq, 10, 3);
+    enqueue(&pq, 20, 1);
+    enqueue(&pq, 30, 4);
+    enqueue(&pq, 40, 2);
+
+    display(&pq);
+
+    printf("Dequeued: %d\n", dequeue(&pq));
+    printf("Dequeued: %d\n", dequeue(&pq));
+
+    display(&pq);
+
+    return 0;
+}
